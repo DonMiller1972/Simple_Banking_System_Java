@@ -1,0 +1,17 @@
+# course config files
+*.yaml
+
+# gradle
+.gradle/
+build
+
+
+# idea config
+.idea
+
+# old stages
+/Simple Banking System (Java)/*
+!/Simple Banking System (Java)/task/
+/Simple Banking System (Java)/task/*
+!/Simple Banking System (Java)/task/src
+!/Simple Banking System (Java)/task/card.s3db
