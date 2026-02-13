@@ -9,6 +9,12 @@ public class AccountModel {
     private String pin;
     private long balance;
 
+   public AccountModel(){
+        this.number = "";
+        this.pin = "";
+        this.balance = 0;
+    }
+
     public AccountModel(int id, String number, String pin, long balance) {
         this.id = id;
         this.number = number;

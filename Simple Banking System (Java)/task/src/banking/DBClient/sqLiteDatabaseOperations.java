@@ -3,6 +3,7 @@ package banking.DBClient;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class sqLiteDatabaseOperations {
     Connection connection = null;
@@ -17,28 +18,37 @@ public class sqLiteDatabaseOperations {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, number);
             ps.setString(2, pin);
+
             ps.executeUpdate();
         }
     }
 
-    public List<AccountModel> login(String number, String pin) {
-        List<AccountModel> list = new ArrayList<>();
-        String selectCard = "SELECT * FROM  card WHERE number = ? AND pin = ?;";
-        try {  Statement statement = connection.createStatement();
-            ResultSet card = statement.executeQuery(selectCard);
-            while(card.next()) {
-                int idCard = card.getInt("id");
-                String nomber = card.getString("number");
-                String pinCode = card.getString("pin");
-                long balance = card.getLong("balance");
-                AccountModel account = new AccountModel(idCard, nomber, pinCode, balance);
-                list.add(account);
+    public Optional<AccountModel> loginByNumAndPin(String number, String pin) {
+
+        String sql = "SELECT * FROM card WHERE number = ? AND pin = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, number);
+            ps.setString(2, pin);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                AccountModel account = new AccountModel(
+                        rs.getInt("id"),
+                        rs.getString("number"),
+                        rs.getString("pin"),
+                        rs.getLong("balance")
+                );
+                return Optional.of(account);
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return list;
+        return Optional.empty();
     }
 
     public List<AccountModel> getAllAccount() {
@@ -48,10 +58,10 @@ public class sqLiteDatabaseOperations {
             ResultSet card = statement.executeQuery(selectCard);
             while(card.next()) {
                 int id = card.getInt("id");
-                String nomber = card.getString("number");
+                String number = card.getString("number");
                 String pinCode = card.getString("pin");
                 long balance = card.getLong("balance");
-                AccountModel account = new AccountModel(id, nomber, pinCode, balance);
+                AccountModel account = new AccountModel(id, number, pinCode, balance);
                 list.add(account);
             }
         } catch (SQLException e) {
@@ -61,24 +71,30 @@ public class sqLiteDatabaseOperations {
         return list;
     }
 
-    public List<AccountModel> searchAccount() {
-        List<AccountModel> list = new ArrayList<>();
-        String selectCard = "SELECT * FROM  card WHERE number = ?;";
-        try {  Statement statement = connection.createStatement();
-            ResultSet card = statement.executeQuery(selectCard);
-            while(card.next()) {
-                int id = card.getInt("id");
-                String nomber = card.getString("number");
-                String pinCode = card.getString("pin");
-                long balance = card.getLong("balance");
-                AccountModel account = new AccountModel(id, nomber, pinCode, balance);
-                list.add(account);
+    public Optional<AccountModel> findByNumber(String number) {
+
+        String sql = "SELECT * FROM card WHERE number = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, number);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                AccountModel account = new AccountModel(
+                        rs.getInt("id"),
+                        rs.getString("number"),
+                        rs.getString("pin"),
+                        rs.getLong("balance")
+                );
+                return Optional.of(account);
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return list;
+        return Optional.empty();
     }
 
 
@@ -130,15 +146,15 @@ public class sqLiteDatabaseOperations {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
+
+
     public int updateBalance(AccountModel accountModel, long delta) throws SQLException {
         String sql = """
         UPDATE card
         SET balance = balance + ?
         WHERE number = ?
     """;
-
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setDouble(1, delta);
         ps.setString(2, accountModel.getNumber());
@@ -146,11 +162,9 @@ public class sqLiteDatabaseOperations {
         return ps.executeUpdate();
     }
 
-
     public void transferDataCards(AccountModel accountModel, AccountModel accountModel1, long amount) throws SQLException {
 
-
-        connection.setAutoCommit(false);
+      connection.setAutoCommit(false);
 
         try {
             updateBalance(accountModel, -amount);

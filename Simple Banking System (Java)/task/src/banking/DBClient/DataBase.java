@@ -6,7 +6,7 @@ public class DataBase {
 
     private final String url;
 
-    private Connection cnn ;
+    private Connection cnn;
 
     public DataBase(String fileName) {
         this.url = "jdbc:sqlite:" + fileName;
@@ -38,8 +38,7 @@ public class DataBase {
                 balance INTEGER DEFAULT 0
             );
         """;
-        try (Connection cnn = DriverManager.getConnection(url);
-              Statement stmt = cnn.createStatement()) {
+        try (Statement stmt = cnn.createStatement()) {
             //System.out.println("My connection is really good!");
             stmt.execute(sql);
 
