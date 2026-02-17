@@ -18,11 +18,11 @@ public class DataBase {
         //return cnn;
     }
 
-    public void closeConnection()  {
-        if(cnn != null){
+    public void closeConnection() {
+        if (cnn != null) {
             try {
                 cnn.close();
-               // System.out.println("Connection closed");
+                // System.out.println("Connection closed");
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -31,23 +31,21 @@ public class DataBase {
 
     private void createTable() {
         String sql = """
-            CREATE TABLE IF NOT EXISTS card (
-                id INTEGER PRIMARY KEY,
-                number TEXT,
-                pin TEXT,
-                balance INTEGER DEFAULT 0
-            );
-        """;
+                    CREATE TABLE IF NOT EXISTS card (
+                        id INTEGER PRIMARY KEY,
+                        number TEXT,
+                        pin TEXT,
+                        balance INTEGER DEFAULT 0
+                    );
+                """;
         try (Statement stmt = cnn.createStatement()) {
             //System.out.println("My connection is really good!");
             stmt.execute(sql);
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    // JDBC
+
     public Connection getConnection() {
         return cnn;
     }

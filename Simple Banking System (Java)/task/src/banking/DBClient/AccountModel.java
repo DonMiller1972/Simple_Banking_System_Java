@@ -3,16 +3,10 @@ package banking.DBClient;
 public class AccountModel {
     private int id;
     private String number;
-
-
-
     private String pin;
     private long balance;
 
-   public AccountModel(){
-        this.number = "";
-        this.pin = "";
-        this.balance = 0;
+    public AccountModel() {
     }
 
     public AccountModel(int id, String number, String pin, long balance) {
@@ -20,7 +14,6 @@ public class AccountModel {
         this.number = number;
         this.pin = pin;
         this.balance = balance;
-
     }
 
     public int getId() {
