@@ -3,18 +3,17 @@ package banking.DBClient;
 public class AccountModel {
     private int id;
     private String number;
-
-
-
     private String pin;
     private long balance;
+
+    public AccountModel() {
+    }
 
     public AccountModel(int id, String number, String pin, long balance) {
         this.id = id;
         this.number = number;
         this.pin = pin;
         this.balance = balance;
-
     }
 
     public int getId() {
