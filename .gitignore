@@ -14,4 +14,8 @@ build
 !/Simple Banking System (Java)/task/
 /Simple Banking System (Java)/task/*
 !/Simple Banking System (Java)/task/src
-!/Simple Banking System (Java)/task/card.s3db
+
+
+# databases
+*.s3db
+*.db
